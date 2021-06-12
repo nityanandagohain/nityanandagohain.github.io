@@ -39,6 +39,9 @@ echo -e "\n${GREEN}Copy static files to distribution directory...${WHITE}"
 echo "> cp -r ./app/static/* ${DIST}/"
 cp -r ./app/static/* $DIST/
 
+touch $DIST/CNAME
+echo "nityanandagohain.in" > $DIST/CNAME
+
 echo -e "\n${GREEN}Run parcel...${WHITE}"
 echo -e "> ./node_modules/.bin/parcel build ./app/public/index.html -d ${DIST}\n"
 ./node_modules/.bin/parcel build ./app/public/index.html -d $DIST
