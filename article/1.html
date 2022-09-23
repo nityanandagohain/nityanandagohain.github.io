@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title> RTLS </title><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><link rel="shortcut icon" href="/favicon.a35c33cf.ico" type="image/x-icon"><link rel="stylesheet" href="/init.07dd3e04.css"><link rel="stylesheet" href="/article.c7535bca.css"></head><body> <header id="top-container" role="navigation"> </header> <main id="main-container"> <article id="article-container"> <h1 id="article-title"> RTLS </h1> <h2 id="article-subtitle"> Building a realtime messaging system using redis Pub/Sub </h2> <time id="article-date"> 2021.06.13 </time> <section id="article-content-container"> <details><summary>Table of Contents</summary>
+<p><div class="table-of-contents"><ul><li><a href="#while-designing-this-system-will-consider-these-requirements">While designing this system will consider these requirements</a></li><li><a href="#architecture-details">Architecture details</a></li><li><a href="#yay-that's-it-we-built-a-highly-scalable-messaging-system">Yay that's it we built a highly scalable messaging system</a></li></ul></div></p>
+</details>
+<p>We want to build a message streaming system that is very highly scalable, where users can join a stream and able to receive messages in near real-time. The users may be connected to servers distributed across different regions. An example of this kind of system will be the messages that you see on Instagram live, they may not be exactly synced with the video but they are real-time.</p>
+<p>For simplicity purposes, we are not considering historical messages and persisting messages for future use. Though it’s pretty simple to add once we implement this architecture.</p>
+<h2 id="while-designing-this-system-will-consider-these-requirements">While designing this system will consider these requirements</h2>
+<ol>
+<li>Users can join a stream and receive messages.</li>
+<li>Users can send messages if they want.</li>
+<li>Users can be distributed across different servers across different regions.</li>
+<li>Users should be able to receive messages in near real-time.</li>
+</ol>
+<h2 id="architecture-details">Architecture details</h2>
+<p><img src="https://user-images.githubusercontent.com/26831659/121815611-fd30ec00-cc94-11eb-8c44-ce0fd7287dba.png" alt="&quot;architecture&quot;"></p>
+<ul>
+<li>Our clients will establish a long-lived HTTP connection with the server and the server will send new messages to the client through <strong>SSE</strong>(server-side events). (For simplicity purposes we have <strong>assumed</strong> that there will be a few users who will be adding messages back to back compared to most of the users who will just view the messages realtime and occasionally add/reply messages in the stream, we can switch to WebSockets if it’s required).</li>
+<li>Our backend servers will connect to the Redis cluster and use the pub/sub feature of Redis. Redis cluster supports high performance and scalability of up to 1000 nodes using its gossip protocol. More on Redis cluster <a href="https://redis.io/topics/cluster-spec">https://redis.io/topics/cluster-spec</a></li>
+<li>When a stream starts we create a Redis channel, and whenever a new message is added we add that to the Redis channel.</li>
+<li>The clients who are connected to the servers will be subscribed to the specific Redis channel, so as soon as a new message is published it will be sent to all the clients using SSE.</li>
+</ul>
+<h2 id="yay-that%E2%80%99s-it-we-built-a-highly-scalable-messaging-system">Yay that’s it we built a highly scalable messaging system</h2>
+<p>We can use this architecture for a variety of systems where near real-time communication is necessary with a little bit of modification.</p>
+<p>The implementation in go can be found here <a href="https://github.com/nityanandagohain/rtms">https://github.com/nityanandagohain/rtms</a></p>
+<p>Feel free to shoot me any questions at <a href="mailto:nityanandagohain@gmail.com">nityanandagohain@gmail.com</a></p> </section> <section id="article-navigation"> <div class="article-navigation-item article-navigation-prev"> <a href="/article/0.html"> <div class="article-navigation-arrow article-navigation-prev">＞</div> <div class="article-navigation-content article-navigation-prev"> <p class="article-navigation-title">First blog</p> <p class="article-navigation-subtitle">Kicking away procastination</p> </div> </a> </div> </section> <section id="article-list-button-container"> <a href="/articles.html"> <div id="article-list-button">📚</div> </a> </section> </article> </main> <script defer src="/init.ddb7c0df.js"></script>
+</body></html>
